@@ -14,23 +14,14 @@ exports.load = function(req, res, next, quizId) {
 
 // GET /quizes
 exports.index = function(req, res) {
-	var search = req.query.search;
-	if (typeof(search) !== 'undefined') {
-		search = '%' + search.replace(new RegExp(' ', 'g'), '%') + '%';
-		models.Quiz.findAll(
-													{ where: ["pregunta like ?", search],
-														order: [['pregunta', 'ASC']]}
-												).then(
-			function(quizes) {
-				res.render('quizes/index.ejs', { quizes: quizes, errors: []});
-			});
-	} else {
-		models.Quiz.findAll().then(
-			function(quizes) {
-				res.render('quizes/index.ejs', { quizes: quizes, errors: []});
-			}
-		).catch(function(error) { next(error);})
-	}
+
+	var search = req.query.search || '';
+	search = '%' + search.replace(new RegExp(' ', 'g'), '%') + '%';
+	models.Quiz
+	.findAll({ where: ["pregunta like ?", search], order: [['pregunta', 'ASC']]})
+	.then(function(quizes) {
+		res.render('quizes/index.ejs', { quizes: quizes, errors: []});
+	});
 };
 
 // GET /quizes/:id
@@ -53,7 +44,7 @@ exports.answer = function(req, res) {
 // GET /quizes/new
 exports.new = function(req, res) {
 	var quiz = models.Quiz.build(	// Crea objeto quiz
-	  {pregunta: "Pregunta", respuesta: "Respuesta"}
+	  {pregunta: "Pregunta", respuesta: "Respuesta", tema: "otro"}
 	);
 
 	res.render('quizes/new', {quiz: quiz, errors: []});
@@ -72,7 +63,7 @@ exports.create = function(req, res) {
 			} else {
 				// Guarda en DB los campos pregunta y respuesta de quiz
 				quiz
-				.save({fields: ["pregunta", "respuesta"]})
+				.save({fields: ["pregunta", "respuesta", "tema"]})
 				.then( function(){ res.redirect('/quizes')})
 					// Redirección HTTP (URL relativo) lista de preguntas
 			}
@@ -100,7 +91,7 @@ exports.update = function(req, res) {
 				res.render('quizes/edit', {quiz: req.quiz, errors: err.errors});
 			} else {
 				req.quiz 			// save: guarda campos pregunta y respuesta en DB
-				.save( {fields: ["pregunta", "respuesta"]})
+				.save( {fields: ["pregunta", "respuesta", "tema"]})
 				.then( function(){ res.redirect('/quizes');});
 			}			// Redirección HTTP a lista de preguntas (URL relativo)
 		}
