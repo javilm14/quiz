@@ -26,11 +26,19 @@
   	</nav>
 
   	<section class="main" id="s1">
-  	<%- body %>
+      <% if (errors.length) { %>
+        <span id="'ErrorMsgs">
+          Corregir errores:<br/>
+          <% for (var i in errors) { %>
+            <span> <%= errors[i].message %> </span><br/>
+          <% } %>
+        </span>
+      <% } %>
+  	<div><%- body %></div>
   	</section>
 
   	<footer class="main" id="f1">
-  		<a href="http://es.wikipedia.org/wiki/Quiz" target="_blank">¿Qué es un Quiz?</a></br>
+  		<a href="http://es.wikipedia.org/wiki/Quiz" target="_blank">¿Qué es un Quiz?</a><br/>
   		Enlace al proyecto en <a href="https://github.com/javilm14/quiz" target="_blank">GitHub</a>
   	</footer>
   </div>
