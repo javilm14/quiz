@@ -42,6 +42,24 @@ app.use(function(req, res, next) {
     next();
 });
 
+// Middleware para comprobar el tiempo entre peticiones del usuario
+app.use(function(req, res, next) {
+    if (req.session.user) {
+
+        var gap = 120000;   // 120000ms --> 120s --> 2m
+
+        var actualTime = (new Date()).getTime();
+        var lastTime = (req.session.last || actualTime)
+        req.session.last = actualTime;
+        
+        if ((actualTime - lastTime) > gap) {
+            res.redirect('/login');
+        }
+    }
+
+    next();
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
