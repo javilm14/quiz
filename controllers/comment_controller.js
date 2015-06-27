@@ -46,10 +46,6 @@ exports.create = function(req, res) {
 
 // GET /quizes/:quizId/comments/:commentId/publish
 exports.publish = function(req, res) {
-	console.log(
-		"********************************************************\n" +
-		"************ COMMENT_CONTROLLER -> PUBLISH *************\n" + 
-		"********************************************************\n");
 	req.comment.publicado = true;
 
 	req.comment.save({filds: ["publicado"]})
